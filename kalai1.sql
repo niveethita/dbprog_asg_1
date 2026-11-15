@@ -154,15 +154,15 @@ VALUES
     ('M003', 'EQ004', 'Screen flickering', '2026-01-12', NULL, 'OPEN'),
     ('M004', 'EQ005', 'Operating system error', '2026-01-15', '2026-01-17', 'RESOLVED'),
     ('M005', 'EQ007', 'Projector lamp failure', '2026-01-18', '2026-01-20', 'RESOLVED'),
-    ('M006', 'EQ008', 'Image display problem', '2026-01-21', NULL, 'OPEN'),
-    ('M007', 'EQ010', 'Projector overheating', '2026-01-23', '2026-01-25', 'RESOLVED'),
+    ('M006', 'EQ008', 'Image display problem', '2026-01-21', '2026-02-10', 'RESOLVED'),
+    ('M007', 'EQ010', 'Camera autofocus failure', '2026-01-23', '2026-01-25', 'RESOLVED'),
     ('M008', 'EQ011', 'Camera lens issue', '2026-01-26', '2026-01-28', 'RESOLVED'),
-    ('M009', 'EQ013', 'Camera autofocus failure', '2026-01-29', NULL, 'OPEN'),
+    ('M009', 'EQ013', 'Microphone connection issue', '2026-01-29', NULL, 'OPEN'),
     ('M010', 'EQ014', 'Microphone connection issue', '2026-02-01', '2026-02-03', 'RESOLVED'),
     ('M011', 'EQ015', 'Speaker sound distortion', '2026-02-04', NULL, 'OPEN'),
     ('M012', 'EQ015', 'Audio console power failure', '2026-02-06', '2026-02-08', 'RESOLVED'),
     ('M013', 'EQ002', 'Laptop fan noise', '2026-02-10', '2026-02-11', 'RESOLVED'),
-    ('M014', 'EQ003', 'Laptop charging port issue', '2026-02-12', NULL, 'OPEN'),
+    ('M014', 'EQ003', 'Laptop charging port issue', '2026-02-12', '2026-02-20', 'RESOLVED'),
     ('M015', 'EQ007', 'Projector remote malfunction', '2026-02-14', '2026-02-15', 'RESOLVED');
 
 /* =====================================================

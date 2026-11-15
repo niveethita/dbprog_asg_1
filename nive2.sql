@@ -20,7 +20,7 @@ CREATE TABLE Rental (
 CREATE TABLE RentalItem (
     rental_item_id VARCHAR(6) PRIMARY KEY,
     rental_id VARCHAR(7) NOT NULL,
-    equipment_id INT NOT NULL,
+    equipment_id VARCHAR(5) NOT NULL,
     agreed_daily_rate DECIMAL(8,2) NOT NULL,
     start_date DATE NOT NULL,
     due_date DATE NOT NULL,
@@ -90,28 +90,28 @@ INSERT INTO Borrower (borrower_id, matric_no, full_name, email, phone_no)
 VALUES ('B7777', 'A23CS0004', 'Harry Potter', 'harry@gmail.com', '0123456789');
 
 INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks) 
-VALUES ('I000423', 'B7777', '2026-06-01', ''),
-       ('I000999', 'B7777', '2026-06-01', ''),
-       ('I004569', 'B7777', '2026-06-01', '');
+VALUES ('I000423', 'B7777', '2026-02-01', ''),
+       ('I000999', 'B7777', '2026-02-01', ''),
+       ('I004569', 'B7777', '2026-02-01', '');
 
 /* Test 1: Non Existant Borrower in Borrower Table added to Rental Table*/
 INSERT INTO Rental(rental_id, borrower_id, rental_date, remarks) 
-VALUES ('I000334', 'B7776', '2026-06-01', '');
+VALUES ('I000334', 'B7776', '2026-02-01', '');
 
 /* Test 2: Invalid Due Date (Due Date is before Start Date)*/
 INSERT INTO RentalItem(rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date) 
-VALUES ('RT0456', 'I000423', 102, 15.00, '2026-06-05', '2026-06-01');
+VALUES ('RT0456', 'I000423', 'EQ001', 15.00, '2026-02-05', '2026-02-01');
 
 /* Test 3: Duplicate Equipment (Same equipment added twice in same rental transaction*/
 INSERT INTO RentalItem(rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date) 
-VALUES ('RT0234', 'I000999', 102, 15.00, '2026-06-01', '2026-06-05');
+VALUES ('RT0234', 'I000999', 'EQ001', 15.00, '2026-02-01', '2026-02-05');
 
 INSERT INTO RentalItem(rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date) 
-VALUES ('RT0567', 'I000999', 102, 15.00, '2026-06-02', '2026-06-06');
+VALUES ('RT0567', 'I000999', 'EQ001', 15.00, '2026-02-02', '2026-02-06');
 
 /* Test 4: Invalid Payment Amount (Negative Value)*/
 INSERT INTO Payment(payment_id, rental_id, amount, payment_method, payment_date)
-VALUES (11202, 'I004569', -45.0, 'CASH', '2026-06-01');
+VALUES (11202, 'I004569', -45.0, 'CASH', '2026-02-01');
 
 /* Clean Test data*/
 DELETE FROM RentalItem
@@ -122,9 +122,6 @@ WHERE payment_id = 11202;
 
 DELETE FROM Rental 
 WHERE rental_id IN ('I000334', 'I000423', 'I000999', 'I004569');
-
-DELETE FROM Equipment 
-WHERE equipment_id = 102;
 
 DELETE FROM Borrower 
 WHERE borrower_id = 'B7777';
@@ -147,96 +144,97 @@ VALUES
     ('B0012', 'A25CS2844', 'Fernandez', 'fernandez@graduate.utm.my', '0170012485'),
     ('B0013', 'A22CS2339', 'Kevin Ong', 'kevin.ong@graduate.utm.my', '0148402332'),
     ('B0014', 'A23CS1234', 'Aishah', 'aishah.a23@graduate.utm.my', '0120473174'),
-    ('B0015', 'A24CS1989', 'Siddarth', 'siddarth@graduate.utm.my', '0144038567');
+    ('B0015', 'A24CS1989', 'Siddarth', 'siddarth@graduate.utm.my', '0144038567'),
+    ('B9999', 'A24CS9999', 'Test User', 'test.user@graduate.utm.my', '0123456789');
 
 INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks)
 VALUES
-    ('I000001', 'B0001', '2026-05-01', NULL),
-    ('I000002', 'B0006', '2026-05-03', NULL),
-    ('I000003', 'B0002', '2026-05-05', NULL),
-    ('I000004', 'B0005', '2026-05-08', NULL),
-    ('I000005', 'B0004', '2026-05-10', NULL),
-    ('I000006', 'B0007', '2026-05-12', NULL),
-    ('I000007', 'B0006', '2026-05-15', NULL),
-    ('I000008', 'B0010', '2026-05-18', NULL),
-    ('I000009', 'B0009', '2026-05-20', 'need manual book'),
-    ('I000010', 'B0007', '2026-05-22', NULL),
-    ('I000011', 'B0012', '2026-05-25', NULL),
-    ('I000012', 'B0011', '2026-05-28', NULL),
-    ('I000013', 'B0015', '2026-06-01', 'extra charger'),
-    ('I000014', 'B0013', '2026-06-02', NULL),
-    ('I000015', 'B0014', '2026-06-05', NULL),
-    ('I000016', 'B0001', '2026-06-06', NULL),
-    ('I000017', 'B0004', '2026-06-08', 'need manual book'),
-    ('I000018', 'B0007', '2026-06-10', NULL),
-    ('I000019', 'B0002', '2026-06-12', NULL),
-    ('I000020', 'B0005', '2026-06-14', NULL);
+    ('I000001', 'B0001', '2026-01-01', NULL),
+    ('I000002', 'B0006', '2026-01-03', NULL),
+    ('I000003', 'B0002', '2026-01-05', NULL),
+    ('I000004', 'B0005', '2026-01-08', NULL),
+    ('I000005', 'B0004', '2026-01-10', NULL),
+    ('I000006', 'B0007', '2026-01-12', NULL),
+    ('I000007', 'B0006', '2026-01-15', NULL),
+    ('I000008', 'B0010', '2026-01-18', NULL),
+    ('I000009', 'B0009', '2026-01-20', 'need manual book'),
+    ('I000010', 'B0007', '2026-01-22', NULL),
+    ('I000011', 'B0012', '2026-01-25', NULL),
+    ('I000012', 'B0011', '2026-01-28', NULL),
+    ('I000013', 'B0015', '2026-02-01', 'extra charger'),
+    ('I000014', 'B0013', '2026-02-02', NULL),
+    ('I000015', 'B0014', '2026-02-05', NULL),
+    ('I000016', 'B0001', '2026-02-06', NULL),
+    ('I000017', 'B0004', '2026-02-08', 'need manual book'),
+    ('I000018', 'B0007', '2026-02-10', NULL),
+    ('I000019', 'B0002', '2026-02-12', NULL),
+    ('I000020', 'B0005', '2026-02-14', NULL);
 
 INSERT INTO RentalItem (rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date, act_return_date)
 VALUES
-    ('RI0001', 'I000001', 01, 20.00, '2026-05-01', '2026-05-05', '2026-05-04'),
-    ('RI0002', 'I000001', 02, 15.50, '2026-05-01', '2026-05-05', '2026-05-05'),
-    ('RI0003', 'I000002', 03, 50.00, '2026-05-03', '2026-05-10', '2026-05-09'),
-    ('RI0004', 'I000003', 01, 20.00, '2026-05-05', '2026-05-08', '2026-05-07'),
-    ('RI0005', 'I000003', 04, 30.00, '2026-05-05', '2026-05-08', '2026-05-08'),
-    ('RI0006', 'I000004', 05, 12.00, '2026-05-08', '2026-05-12', '2026-05-12'),
-    ('RI0007', 'I000005', 06, 45.00, '2026-05-10', '2026-05-15', '2026-05-14'),
-    ('RI0008', 'I000006', 07, 10.00, '2026-05-12', '2026-05-14', '2026-05-14'),
-    ('RI0009', 'I000007', 02, 15.50, '2026-05-15', '2026-05-20', '2026-05-19'),
-    ('RI0010', 'I000007', 08, 60.00, '2026-05-15', '2026-05-20', '2026-05-20'),
-    ('RI0011', 'I000008', 09, 25.00, '2026-05-18', '2026-05-22', '2026-05-21'),
-    ('RI0012', 'I000009', 10, 35.00, '2026-05-20', '2026-05-25', '2026-05-25'),
-    ('RI0013', 'I000010', 03, 50.00, '2026-05-22', '2026-05-28', '2026-05-27'),
-    ('RI0014', 'I000011', 11, 18.00, '2026-05-25', '2026-06-01', NULL),
-    ('RI0015', 'I000011', 01, 20.00, '2026-05-25', '2026-06-01', NULL),
-    ('RI0016', 'I000012', 04, 30.00, '2026-05-28', '2026-06-02', '2026-06-02'),
-    ('RI0017', 'I000013', 12, 40.00, '2026-06-01', '2026-06-05', NULL),
-    ('RI0018', 'I000014', 06, 45.00, '2026-06-02', '2026-06-06', NULL),
-    ('RI0019', 'I000015', 05, 12.00, '2026-06-05', '2026-06-10', NULL),
-    ('RI0020', 'I000016', 07, 10.00, '2026-06-06', '2026-06-09', '2026-06-08'),
-    ('RI0021', 'I000016', 09, 25.00, '2026-06-06', '2026-06-09', '2026-06-08'),
-    ('RI0022', 'I000017', 08, 60.00, '2026-06-08', '2026-06-12', NULL),
-    ('RI0023', 'I000018', 10, 35.00, '2026-06-10', '2026-06-15', NULL),
-    ('RI0024', 'I000019', 02, 15.50, '2026-06-12', '2026-06-18', NULL),
-    ('RI0025', 'I000020', 03, 50.00, '2026-06-14', '2026-06-20', NULL),
-    ('RI0026', 'I000002', 11, 18.00, '2026-05-04', '2026-05-09', '2026-05-09'),
-    ('RI0027', 'I000004', 12, 40.00, '2026-05-09', '2026-05-13', '2026-05-13'),
-    ('RI0028', 'I000006', 01, 20.00, '2026-05-13', '2026-05-16', '2026-05-16'),
-    ('RI0029', 'I000009', 05, 12.00, '2026-05-21', '2026-05-26', '2026-05-26'),
-    ('RI0030', 'I000012', 06, 45.00, '2026-05-29', '2026-06-03', '2026-06-01');
+    ('RI0001', 'I000001', 'EQ001', 20.00, '2026-01-01', '2026-01-05', '2026-01-04'),
+    ('RI0002', 'I000001', 'EQ002', 15.50, '2026-01-01', '2026-01-05', '2026-01-05'),
+    ('RI0003', 'I000002', 'EQ010', 50.00, '2026-01-03', '2026-01-10', '2026-01-09'),
+    ('RI0004', 'I000003', 'EQ001', 20.00, '2026-01-05', '2026-01-08', '2026-01-07'),
+    ('RI0005', 'I000003', 'EQ004', 30.00, '2026-01-05', '2026-01-08', '2026-01-08'),
+    ('RI0006', 'I000004', 'EQ005', 12.00, '2026-01-08', '2026-01-12', '2026-01-12'),
+    ('RI0007', 'I000005', 'EQ006', 45.00, '2026-01-10', '2026-01-15', '2026-01-14'),
+    ('RI0008', 'I000006', 'EQ007', 10.00, '2026-01-12', '2026-01-14', '2026-01-14'),
+    ('RI0009', 'I000007', 'EQ002', 15.50, '2026-01-15', '2026-01-20', '2026-01-19'),
+    ('RI0010', 'I000007', 'EQ008', 60.00, '2026-01-15', '2026-01-20', '2026-01-20'),
+    ('RI0011', 'I000008', 'EQ009', 25.00, '2026-01-18', '2026-01-22', '2026-01-21'),
+    ('RI0012', 'I000009', 'EQ012', 35.00, '2026-01-20', '2026-01-25', '2026-01-25'),
+    ('RI0013', 'I000010', 'EQ003', 50.00, '2026-01-22', '2026-01-28', '2026-01-27'),
+    ('RI0014', 'I000011', 'EQ011', 18.00, '2026-01-29', '2026-02-05', NULL),
+    ('RI0015', 'I000011', 'EQ001', 20.00, '2026-01-25', '2026-02-01', NULL),
+    ('RI0016', 'I000012', 'EQ004', 30.00, '2026-01-28', '2026-02-02', '2026-02-02'),
+    ('RI0017', 'I000013', 'EQ012', 40.00, '2026-02-01', '2026-02-05', NULL),
+    ('RI0018', 'I000014', 'EQ006', 45.00, '2026-02-02', '2026-02-06', NULL),
+    ('RI0019', 'I000015', 'EQ005', 12.00, '2026-02-05', '2026-02-10', NULL),
+    ('RI0020', 'I000016', 'EQ007', 10.00, '2026-02-06', '2026-02-09', '2026-02-08'),
+    ('RI0021', 'I000016', 'EQ009', 25.00, '2026-02-06', '2026-02-09', '2026-02-08'),
+    ('RI0022', 'I000017', 'EQ008', 60.00, '2026-02-11', '2026-02-15', NULL),
+    ('RI0023', 'I000018', 'EQ010', 35.00, '2026-02-10', '2026-02-15', NULL),
+    ('RI0024', 'I000019', 'EQ002', 15.50, '2026-02-12', '2026-02-18', NULL),
+    ('RI0025', 'I000020', 'EQ003', 50.00, '2026-02-21', '2026-02-27', NULL),
+    ('RI0026', 'I000002', 'EQ011', 18.00, '2026-01-04', '2026-01-09', '2026-01-09'),
+    ('RI0027', 'I000004', 'EQ012', 40.00, '2026-01-09', '2026-01-13', '2026-01-13'),
+    ('RI0028', 'I000006', 'EQ001', 20.00, '2026-01-13', '2026-01-16', '2026-01-16'),
+    ('RI0029', 'I000009', 'EQ005', 12.00, '2026-01-21', '2026-01-26', '2026-01-26'),
+    ('RI0030', 'I000012', 'EQ006', 45.00, '2026-01-29', '2026-02-03', '2026-02-01');
 
 INSERT INTO Payment (payment_id, rental_id, amount, payment_method, payment_date)
 VALUES
-    (101, 'I000001', 92.00, 'FPX',  '2026-05-01'),
-    (102, 'I000002', 150.00, 'CARD', '2026-05-03'),
-    (103, 'I000003', 80.00, 'CASH', '2026-05-05'),
-    (104, 'I000004', 45.00, 'TNG',  '2026-05-08'),
-    (105, 'I000005', 120.00, 'FPX',  '2026-05-10'),
-    (106, 'I000006', 30.00, 'CASH', '2026-05-12'),
-    (107, 'I000007', 200.00, 'CARD', '2026-05-15'),
-    (108, 'I000008', 75.00, 'TNG',  '2026-05-18'),
-    (109, 'I000009', 90.00, 'FPX',  '2026-05-20'),
-    (110, 'I000010', 150.00, 'CARD', '2026-05-22'),
-    (111, 'I000011', 216.00, 'FPX',  '2026-05-25'),
-    (112, 'I000012', 60.00, 'CASH', '2026-05-28'),
-    (113, 'I000013', 110.00, 'TNG',  '2026-06-01'),
-    (114, 'I000014', 135.00, 'CARD', '2026-06-02'),
-    (115, 'I000010', 50.00, 'CASH', '2026-05-27'),
-    (116, 'I000016', 75.00, 'FPX',  '2026-06-06'),
-    (117, 'I000017', 180.00, 'CARD', '2026-06-08'),
-    (118, 'I000018', 95.00, 'TNG',  '2026-06-10'),
-    (119, 'I000019', 70.00, 'CASH', '2026-06-12'),
-    (120, 'I000020', 150.00, 'FPX',  '2026-06-14'),
-    (121, 'I000001', 50.00, 'CASH', '2026-05-04'),
-    (122, 'I000003', 20.00, 'TNG',  '2026-05-07'),
-    (123, 'I000005', 30.00, 'CARD', '2026-05-14'),
-    (124, 'I000007', 50.00, 'FPX',  '2026-05-18'),
-    (125, 'I000011', 50.00, 'CASH', '2026-05-30'),
-    (126, 'I000002', 50.00, 'TNG',  '2026-05-05'),
-    (127, 'I000009', 40.00, 'CARD', '2026-05-22'),
-    (128, 'I000013', 30.00, 'FPX',  '2026-06-03'),
-    (129, 'I000016', 30.00, 'CASH', '2026-06-08'),
-    (130, 'I000020', 50.00, 'TNG',  '2026-07-02');
+    (101, 'I000001', 92.00, 'FPX',  '2026-01-01'),
+    (102, 'I000002', 150.00, 'CARD', '2026-01-03'),
+    (103, 'I000003', 80.00, 'CASH', '2026-01-05'),
+    (104, 'I000004', 45.00, 'TNG',  '2026-01-08'),
+    (105, 'I000005', 120.00, 'FPX',  '2026-01-10'),
+    (106, 'I000006', 30.00, 'CASH', '2026-01-12'),
+    (107, 'I000007', 200.00, 'CARD', '2026-01-15'),
+    (108, 'I000008', 75.00, 'TNG',  '2026-01-18'),
+    (109, 'I000009', 90.00, 'FPX',  '2026-01-20'),
+    (110, 'I000010', 150.00, 'CARD', '2026-01-22'),
+    (111, 'I000011', 216.00, 'FPX',  '2026-01-25'),
+    (112, 'I000012', 60.00, 'CASH', '2026-01-28'),
+    (113, 'I000013', 110.00, 'TNG',  '2026-02-01'),
+    (114, 'I000014', 135.00, 'CARD', '2026-02-02'),
+    (115, 'I000010', 50.00, 'CASH', '2026-01-27'),
+    (116, 'I000016', 75.00, 'FPX',  '2026-02-06'),
+    (117, 'I000017', 180.00, 'CARD', '2026-02-08'),
+    (118, 'I000018', 95.00, 'TNG',  '2026-02-10'),
+    (119, 'I000019', 70.00, 'CASH', '2026-02-12'),
+    (120, 'I000020', 150.00, 'FPX',  '2026-02-14'),
+    (121, 'I000001', 50.00, 'CASH', '2026-01-04'),
+    (122, 'I000003', 20.00, 'TNG',  '2026-01-07'),
+    (123, 'I000005', 30.00, 'CARD', '2026-01-14'),
+    (124, 'I000007', 50.00, 'FPX',  '2026-01-18'),
+    (125, 'I000011', 50.00, 'CASH', '2026-01-30'),
+    (126, 'I000002', 50.00, 'TNG',  '2026-01-05'),
+    (127, 'I000009', 40.00, 'CARD', '2026-01-22'),
+    (128, 'I000013', 30.00, 'FPX',  '2026-02-03'),
+    (129, 'I000016', 30.00, 'CASH', '2026-02-08'),
+    (130, 'I000020', 50.00, 'TNG',  '2026-03-02');
  
 UPDATE Borrower
 SET phone_no = '0111111111'
@@ -269,34 +267,13 @@ ORDER BY borrower_id;
 
 SELECT rental_id, borrower_id, rental_date, remarks
 FROM Rental
-WHERE rental_date BETWEEN '2026-05-01' AND '2026-05-31'
+WHERE rental_date BETWEEN '2026-01-01' AND '2026-01-31'
 ORDER BY rental_date;
 
 SELECT rental_id, borrower_id, rental_date, remarks
 FROM Rental
-WHERE borrower_id IN ('B0006', 'B0007') OR rental_date > '2026-06-11';
+WHERE borrower_id IN ('B0006', 'B0007') OR rental_date > '2026-02-11';
 
-/* VALIDATION 1: Rental date cannot be later than item start date 
-
-SELECT r.rental_id, 
-       r.rental_date,
-       ri.rental_item_id, 
-       ri.start_date
-FROM Rental r
-INNER JOIN RentalItem ri
-    ON r.rental_id = ri.rental_id
-WHERE r.rental_date > ri.start_date; */
-
-/* VALIDATION 2: Payment date cannot precede rental date 
-
-SELECT p.payment_id, 
-       p.payment_date,
-       r.rental_id, 
-       r.rental_date
-FROM Payment p
-INNER JOIN Rental r
-    ON p.rental_id = r.rental_id
-WHERE p.payment_date < r.rental_date; */
 
 /* TASK 3: QUERIES, REPORTING & VIEWS*/
 /*String Function*/
@@ -355,8 +332,8 @@ SELECT r.rental_id, r.borrower_id, r.rental_date
 FROM Rental r
 LEFT JOIN Payment p
        ON r.rental_id = p.rental_id
-      AND p.payment_date <= '2026-06-30'
-WHERE r.rental_date <= '2026-06-30'
+      AND p.payment_date <= '2026-02-28'
+WHERE r.rental_date <= '2026-02-28'
   AND p.payment_id IS NULL;
 
 /* First grouped report for borrowers with 2 or more rentals*/
@@ -373,37 +350,37 @@ SELECT payment_method,
        SUM(amount) AS total_amount,
        ROUND(AVG(amount), 2) AS avg_amount
 FROM Payment
-WHERE payment_date <= '2026-06-30'
+WHERE payment_date <= '2026-02-28'
 GROUP BY payment_method
 ORDER BY total_amount DESC;
 
 /*required output 3*/
 
-/*Union borrower who rented in both months */
+/*Union borrower who rented in both months (only shows one of the records)*/
 SELECT borrower_id 
 FROM Rental 
 WHERE rental_date 
-BETWEEN '2026-05-01' AND '2026-05-31'
+BETWEEN '2026-01-01' AND '2026-01-31'
 
 UNION
 
 SELECT borrower_id 
 FROM Rental 
 WHERE rental_date 
-BETWEEN '2026-06-01' AND '2026-06-30';
+BETWEEN '2026-02-01' AND '2026-02-28';
 
-/* Union All for borrower who rented in both months*/
+/* Union All for borrower who rented in both months (shows both records)*/
 SELECT borrower_id 
 FROM Rental 
 WHERE rental_date 
-BETWEEN '2026-05-01' AND '2026-05-31'
+BETWEEN '2026-01-01' AND '2026-01-31'
 
 UNION ALL
 
 SELECT borrower_id 
 FROM Rental 
 WHERE rental_date 
-BETWEEN '2026-06-01' AND '2026-06-30';
+BETWEEN '2026-02-01' AND '2026-02-28';
 
 /* View Borrower */
 
@@ -450,9 +427,9 @@ INNER JOIN (SELECT rental_id,
             GROUP BY rental_id) rc ON r.rental_id = rc.rental_id
 LEFT JOIN (SELECT rental_id, SUM(amount) AS paid
            FROM Payment
-           WHERE payment_date <= '2026-06-30'
+           WHERE payment_date <= '2026-02-28'
            GROUP BY rental_id) rp ON r.rental_id = rp.rental_id
-WHERE r.rental_date <= '2026-06-30'
+WHERE r.rental_date <= '2026-02-28'
 GROUP BY YEAR(r.rental_date), MONTH(r.rental_date)
 ORDER BY y, m;
 
