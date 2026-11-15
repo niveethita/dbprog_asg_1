@@ -432,12 +432,16 @@ FROM BorrowerView
 WHERE TotalRentals = 0;
 
 /* Required Management Output 3*/
-SELECT YEAR(r.rental_date) AS y,
-       MONTH(r.rental_date) AS m,
-       COUNT(*) AS rentals,
-       SUM(rc.item_count) AS items_rented,
-       SUM(rc.charge) AS total_charges,
-       SUM(COALESCE(rp.paid, 0)) AS total_payments
+SELECT YEAR(r.rental_date) AS y, 
+    MONTH(r.rental_date) AS m, 
+    COUNT(*) AS rentals,
+    SUM(rc.item_count) AS items_rented, 
+    SUM(rc.charge) AS total_charges,
+    SUM(
+       CASE
+        WHEN rp.paid IS NULL THEN 0
+        ELSE rp.paid
+    END ) AS total_payments
 FROM Rental r
 INNER JOIN (SELECT rental_id,
                    COUNT(*) AS item_count,

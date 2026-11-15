@@ -92,3 +92,41 @@ FROM Payment p
 INNER JOIN Rental r
     ON p.rental_id = r.rental_id
 WHERE p.payment_date < r.rental_date; 
+
+/*Overlap & Touching Endpoints Test*/
+/*Overlapping*/ 
+SELECT * FROM rental_overlap; 
+
+/*Add overlapping Data*/
+INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks)
+VALUES ('I900001', 'B0003', '2026-06-01', 'test data1');
+INSERT INTO RentalItem (rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date, act_return_date)
+VALUES ('RT9001', 'I900001', 13, 20.00, '2026-06-01', '2026-06-05', '2026-06-05');
+
+
+INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks)
+VALUES ('I900002', 'B0008', '2026-06-03', 'test data 2');
+INSERT INTO RentalItem (rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date, act_return_date)
+VALUES ('RT9002', 'I900002', 13, 20.00, '2026-06-03', '2026-06-08', '2026-06-08');
+
+/*Display the overlapping data*/
+SELECT * FROM rental_overlap; 
+
+/*Clean test data 2 only*/
+DELETE FROM RentalItem WHERE rental_item_id = 'RT9002';
+DELETE FROM Rental WHERE rental_id = 'I900002';
+
+/* Touching Endpoints */
+INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks)
+VALUES ('I900003', 'B0008', '2026-06-05', 'test data 3');
+INSERT INTO RentalItem (rental_item_id, rental_id, equipment_id, agreed_daily_rate, start_date, due_date, act_return_date)
+VALUES ('RT9003', 'I900003', 13, 20.00, '2026-06-05', '2026-06-09', '2026-06-09');
+
+/*Display the overlapping data (No overlap happens here)*/
+SELECT * FROM rental_overlap; 
+DELETE FROM RentalItem WHERE rental_item_id IN ('RT9003', 'RT9001');
+DELETE FROM Rental WHERE rental_id IN ('I900003', 'I900001');
+
+/*Clean test data 1 and 3 */
+DELETE FROM RentalItem WHERE rental_item_id IN ('RT9003', 'RT9001');
+DELETE FROM Rental WHERE rental_id IN ('I900003', 'I900001');
