@@ -151,7 +151,7 @@ INSERT INTO Maintenance
 VALUES
     ('M001', 'EQ002', 'Laptop battery not charging', '2026-01-05', '2026-01-07', 'RESOLVED'),
     ('M002', 'EQ003', 'Keyboard not responding', '2026-01-08', '2026-01-10', 'RESOLVED'),
-    ('M003', 'EQ004', 'Screen flickering', '2026-01-12', NULL, 'OPEN'),
+    ('M003', 'EQ004', 'Screen flickering', '2026-01-12', '2026-01-14', 'RESOLVED'),
     ('M004', 'EQ005', 'Operating system error', '2026-01-15', '2026-01-17', 'RESOLVED'),
     ('M005', 'EQ007', 'Projector lamp failure', '2026-01-18', '2026-01-20', 'RESOLVED'),
     ('M006', 'EQ008', 'Image display problem', '2026-01-21', '2026-02-10', 'RESOLVED'),

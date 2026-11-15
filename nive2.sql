@@ -356,7 +356,7 @@ ORDER BY total_amount DESC;
 
 /*required output 3*/
 
-/*Union borrower who rented in both months (only shows one of the records)*/
+/*Union borrower who rented in either months */
 SELECT borrower_id 
 FROM Rental 
 WHERE rental_date 
