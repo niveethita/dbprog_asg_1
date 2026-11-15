@@ -218,7 +218,7 @@ INSERT INTO Equipment
 SELECT
     'EQ999',
     'INVALID-FK-001',
-    'CAT99', -- Non-existent category ID
+    'CAT9', -- Non-existent category ID
     LocationID,
     'GOOD',
     'Invalid foreign key test'

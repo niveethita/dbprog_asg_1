@@ -84,7 +84,7 @@ VALUES ('RT0567', 'I000999', 'EQ001', 15.00, '2026-02-02', '2026-02-06');
 
 /* Test 4: Invalid Payment Amount (Negative Value)*/
 INSERT INTO Payment(payment_id, rental_id, amount, payment_method, payment_date)
-VALUES (11202, 'I004569', -45.0, 'CASH', '2026-02-01');
+VALUES ('P011202', 'I004569', -45.0, 'CASH', '2026-02-01');
 SELECT rental_id, borrower_id, rental_date, remarks
 FROM Rental
 WHERE borrower_id IN ('B0006', 'B0007') OR rental_date > '2026-02-11';
@@ -94,7 +94,7 @@ DELETE FROM RentalItem
 WHERE rental_item_id IN ('RT0234', 'RT0567');
 
 DELETE FROM Payment
-WHERE payment_id = 11202;
+WHERE payment_id = 'P011202';
 
 DELETE FROM Rental 
 WHERE rental_id IN ('I000334', 'I000423', 'I000999', 'I004569');
@@ -164,6 +164,33 @@ INNER JOIN Rental r
 WHERE p.payment_date < r.rental_date; 
 
 /*VERIFICATION */
+/*Case 1, no related records*/
+/*Borrower Records */
+SELECT b.borrower_id, b.matric_no, b.full_name, b.email
+FROM Borrower b
+LEFT JOIN Rental r ON b.borrower_id = r.borrower_id
+WHERE r.rental_id IS NULL;
 
+/*Rental Records */
+SELECT * 
+FROM financial_report 
+WHERE rental_id = 'I000015';
+
+/*Case 2, multiple items and payments: I000001*/
+SELECT * 
+FROM financial_report 
+WHERE rental_id = 'I000001'
+ORDER BY rental_item_id;
+
+/*Case 3, partial payment and the cutoff date: I000020.*/
+SELECT * 
+FROM financial_report 
+WHERE rental_id = 'I000020';
+
+/*Case 4, Multiple items and multiple payments partially paid*/
+SELECT * 
+FROM financial_report 
+WHERE rental_id = 'I000003'
+ORDER BY rental_item_id;
 
 

@@ -5,8 +5,8 @@ CREATE TABLE EquipmentCategories (
     CategoryName VARCHAR(100) NOT NULL UNIQUE,
     StandardDailyRate DECIMAL(10,2) NOT NULL,
     Deposit DECIMAL(10,2) NOT NULL,
-    CHECK (StandardDailyRate > 0),
-    CHECK (Deposit >= 0)
+    CONSTRAINT check_std_daily_rate CHECK (StandardDailyRate > 0),
+    CONSTRAINT check_deposit CHECK (Deposit >= 0)
 );
 
 CREATE TABLE StorageLocations (
@@ -103,7 +103,7 @@ CREATE TABLE RentalItem (
 );
 
 CREATE TABLE Payment (
-    payment_id INT PRIMARY KEY,
+    payment_id VARCHAR(7) PRIMARY KEY,
     rental_id VARCHAR(7) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_method ENUM('CASH', 'FPX', 'CARD', 'TNG') NOT NULL,
@@ -115,51 +115,6 @@ CREATE TABLE Payment (
     CONSTRAINT check_amount 
         CHECK (amount > 0)
 );
-/* equipment-status view (OUTPUT 4)*/
-CREATE VIEW equipment_status AS
-SELECT e.EquipmentID, e.AssetIdentifier, c.CategoryName, l.LocationCode, l.LocationName, e.EquipmentCondition,
-
-    CASE
-        WHEN m.open_maintenance_count IS NULL THEN 0
-        ELSE m.open_maintenance_count
-    END AS open_maintenance_count,
-
-    CASE
-        WHEN r.active_rental_count IS NULL THEN 0
-        ELSE r.active_rental_count
-    END AS active_rental_count,
-
-    CASE
-        WHEN e.EquipmentCondition IN ('GOOD', 'FAIR')
-             AND (m.open_maintenance_count IS NULL OR m.open_maintenance_count = 0)
-             AND (r.active_rental_count IS NULL OR r.active_rental_count = 0)
-        THEN 'AVAILABLE'
-        ELSE 'UNAVAILABLE'
-    END AS equipment_status
-
-FROM Equipment e
-INNER JOIN EquipmentCategories c ON e.CategoryID = c.CategoryID
-INNER JOIN StorageLocations l ON e.LocationID = l.LocationID
-
-LEFT JOIN (
-    SELECT EquipmentID, COUNT(*) AS open_maintenance_count
-    FROM Maintenance
-    WHERE ReportedDate <= '2026-02-28'
-      AND (ResolutionDate IS NULL OR ResolutionDate > '2026-02-28')
-    GROUP BY EquipmentID
-) m ON e.EquipmentID = m.EquipmentID
-
-LEFT JOIN (
-    SELECT equipment_id, COUNT(*) AS active_rental_count
-    FROM RentalItem
-    WHERE start_date <= '2026-02-28'
-      AND (act_return_date IS NULL OR act_return_date > '2026-02-28')
-    GROUP BY equipment_id
-) r ON e.EquipmentID = r.equipment_id;
-
-SELECT *
-FROM equipment_status
-ORDER BY EquipmentID;
 
 /*INPUT DATA*/
 INSERT INTO EquipmentCategories
@@ -241,7 +196,7 @@ VALUES
     ('B0012', 'A25CS2844', 'Fernandez', 'fernandez@graduate.utm.my', '0170012485'),
     ('B0013', 'A22CS2339', 'Kevin Ong', 'kevin.ong@graduate.utm.my', '0148402332'),
     ('B0014', 'A23CS1234', 'Aishah', 'aishah.a23@graduate.utm.my', '0120473174'),
-    ('B0015', 'A24CS1989', 'Siddarth', 'siddarth@graduate.utm.my', '0144038567');
+    ('B0015', 'A24CS1989', 'Siddarth', 'siddarth@graduate.utm.my', '0144038567'),
     ('B9999', 'A24CS9999', 'Test User', 'test.user@graduate.utm.my', '0123456789');
 
 INSERT INTO Rental (rental_id, borrower_id, rental_date, remarks)
@@ -282,7 +237,7 @@ VALUES
     ('RI0011', 'I000008', 'EQ009', 25.00, '2026-01-18', '2026-01-22', '2026-01-21'),
     ('RI0012', 'I000009', 'EQ012', 35.00, '2026-01-20', '2026-01-25', '2026-01-25'),
     ('RI0013', 'I000010', 'EQ003', 50.00, '2026-01-22', '2026-01-28', '2026-01-27'),
-    ('RI0014', 'I000011', 'EQ011', 18.00, '2026-01-29', '2026-02-05', NULL),
+    ('RI0014', 'I000011', 'EQ011', 18.00, '2026-01-29', '2026-02-05', '2026-03-05'),
     ('RI0015', 'I000011', 'EQ001', 20.00, '2026-01-25', '2026-02-01', NULL),
     ('RI0016', 'I000012', 'EQ004', 30.00, '2026-01-28', '2026-02-02', '2026-02-02'),
     ('RI0017', 'I000013', 'EQ012', 40.00, '2026-02-01', '2026-02-05', NULL),
@@ -302,36 +257,82 @@ VALUES
 
 INSERT INTO Payment (payment_id, rental_id, amount, payment_method, payment_date)
 VALUES
-    (101, 'I000001', 92.00, 'FPX',  '2026-01-01'),
-    (102, 'I000002', 150.00, 'CARD', '2026-01-03'),
-    (103, 'I000003', 80.00, 'CASH', '2026-01-05'),
-    (104, 'I000004', 45.00, 'TNG',  '2026-01-08'),
-    (105, 'I000005', 120.00, 'FPX',  '2026-01-10'),
-    (106, 'I000006', 30.00, 'CASH', '2026-01-12'),
-    (107, 'I000007', 200.00, 'CARD', '2026-01-15'),
-    (108, 'I000008', 75.00, 'TNG',  '2026-01-18'),
-    (109, 'I000009', 90.00, 'FPX',  '2026-01-20'),
-    (110, 'I000010', 150.00, 'CARD', '2026-01-22'),
-    (111, 'I000011', 216.00, 'FPX',  '2026-01-25'),
-    (112, 'I000012', 60.00, 'CASH', '2026-01-28'),
-    (113, 'I000013', 110.00, 'TNG',  '2026-02-01'),
-    (114, 'I000014', 135.00, 'CARD', '2026-02-02'),
-    (115, 'I000010', 50.00, 'CASH', '2026-01-27'),
-    (116, 'I000016', 75.00, 'FPX',  '2026-02-06'),
-    (117, 'I000017', 180.00, 'CARD', '2026-02-08'),
-    (118, 'I000018', 95.00, 'TNG',  '2026-02-10'),
-    (119, 'I000019', 70.00, 'CASH', '2026-02-12'),
-    (120, 'I000020', 150.00, 'FPX',  '2026-02-14'),
-    (121, 'I000001', 50.00, 'CASH', '2026-01-04'),
-    (122, 'I000003', 20.00, 'TNG',  '2026-01-07'),
-    (123, 'I000005', 30.00, 'CARD', '2026-01-14'),
-    (124, 'I000007', 50.00, 'FPX',  '2026-01-18'),
-    (125, 'I000011', 50.00, 'CASH', '2026-01-30'),
-    (126, 'I000002', 50.00, 'TNG',  '2026-01-05'),
-    (127, 'I000009', 40.00, 'CARD', '2026-01-22'),
-    (128, 'I000013', 30.00, 'FPX',  '2026-02-03'),
-    (129, 'I000016', 30.00, 'CASH', '2026-02-08'),
-    (130, 'I000020', 50.00, 'TNG',  '2026-03-02');
+    ('P000001', 'I000001', 92.00, 'FPX',  '2026-01-01'),
+    ('P000002', 'I000002', 150.00, 'CARD', '2026-01-03'),
+    ('P000003', 'I000003', 80.00, 'CASH', '2026-01-05'),
+    ('P000004', 'I000004', 45.00, 'TNG',  '2026-01-08'),
+    ('P000005', 'I000005', 120.00, 'FPX',  '2026-01-10'),
+    ('P000006', 'I000006', 30.00, 'CASH', '2026-01-12'),
+    ('P000007', 'I000007', 200.00, 'CARD', '2026-01-15'),
+    ('P000008', 'I000008', 75.00, 'TNG',  '2026-01-18'),
+    ('P000009', 'I000009', 90.00, 'FPX',  '2026-01-20'),
+    ('P000010', 'I000010', 150.00, 'CARD', '2026-01-22'),
+    ('P000011', 'I000011', 216.00, 'FPX',  '2026-01-25'),
+    ('P000012', 'I000012', 60.00, 'CASH', '2026-01-28'),
+    ('P000013', 'I000013', 110.00, 'TNG',  '2026-02-01'),
+    ('P000014', 'I000014', 135.00, 'CARD', '2026-02-02'),
+    ('P000015', 'I000010', 50.00, 'CASH', '2026-01-27'),
+    ('P000016', 'I000016', 75.00, 'FPX',  '2026-02-06'),
+    ('P000017', 'I000017', 180.00, 'CARD', '2026-02-08'),
+    ('P000018', 'I000018', 95.00, 'TNG',  '2026-02-10'),
+    ('P000019', 'I000019', 70.00, 'CASH', '2026-02-12'),
+    ('P000020', 'I000020', 150.00, 'FPX',  '2026-02-14'),
+    ('P000021', 'I000001', 50.00, 'CASH', '2026-01-04'),
+    ('P000022', 'I000003', 20.00, 'TNG',  '2026-01-07'),
+    ('P000023', 'I000005', 30.00, 'CARD', '2026-01-14'),
+    ('P000024', 'I000007', 50.00, 'FPX',  '2026-01-18'),
+    ('P000025', 'I000011', 50.00, 'CASH', '2026-01-30'),
+    ('P000026', 'I000002', 50.00, 'TNG',  '2026-01-05'),
+    ('P000027', 'I000009', 40.00, 'CARD', '2026-01-22'),
+    ('P000028', 'I000013', 30.00, 'FPX',  '2026-02-03'),
+    ('P000029', 'I000016', 30.00, 'CASH', '2026-02-08'),
+    ('P000030', 'I000020', 50.00, 'TNG',  '2026-03-02');
+    
+/* equipment-status view (OUTPUT 4)*/
+CREATE VIEW equipment_status AS
+SELECT e.EquipmentID, e.AssetIdentifier, c.CategoryName, l.LocationCode, l.LocationName, e.EquipmentCondition,
+
+    CASE
+        WHEN m.open_maintenance_count IS NULL THEN 0
+        ELSE m.open_maintenance_count
+    END AS open_maintenance_count,
+
+    CASE
+        WHEN r.active_rental_count IS NULL THEN 0
+        ELSE r.active_rental_count
+    END AS active_rental_count,
+
+    CASE
+        WHEN e.EquipmentCondition IN ('GOOD', 'FAIR')
+             AND (m.open_maintenance_count IS NULL OR m.open_maintenance_count = 0)
+             AND (r.active_rental_count IS NULL OR r.active_rental_count = 0)
+        THEN 'AVAILABLE'
+        ELSE 'UNAVAILABLE'
+    END AS equipment_status
+
+FROM Equipment e
+INNER JOIN EquipmentCategories c ON e.CategoryID = c.CategoryID
+INNER JOIN StorageLocations l ON e.LocationID = l.LocationID
+
+LEFT JOIN (
+    SELECT EquipmentID, COUNT(*) AS open_maintenance_count
+    FROM Maintenance
+    WHERE ReportedDate <= '2026-02-28'
+      AND (ResolutionDate IS NULL OR ResolutionDate > '2026-02-28')
+    GROUP BY EquipmentID
+) m ON e.EquipmentID = m.EquipmentID
+
+LEFT JOIN (
+    SELECT equipment_id, COUNT(*) AS active_rental_count
+    FROM RentalItem
+    WHERE start_date <= '2026-02-28'
+      AND (act_return_date IS NULL OR act_return_date > '2026-02-28')
+    GROUP BY equipment_id
+) r ON e.EquipmentID = r.equipment_id;
+
+SELECT *
+FROM equipment_status
+ORDER BY EquipmentID;
 
 /* financial report (OUTPUT 5)*/
 CREATE VIEW financial_report AS
@@ -340,18 +341,18 @@ SELECT r.rental_id, i.rental_item_id, r.rental_date, b.borrower_id, b.matric_no,
     t.transaction_charge,
     
     CASE
-        WHEN p.total_payments IS NULL THEN 0
+        WHEN p.total_payments IS NULL THEN 0.00
         ELSE p.total_payments
     END AS total_payments,
     
     t.transaction_charge -     
     CASE
-        WHEN p.total_payments IS NULL THEN 0
+        WHEN p.total_payments IS NULL THEN 0.00
         ELSE p.total_payments
     END AS outstanding_balance,
     
     CASE
-        WHEN p.total_payments IS NULL OR p.total_payments = 0 THEN 'UNPAID'
+        WHEN p.total_payments IS NULL OR p.total_payments = 0.00 THEN 'UNPAID'
         WHEN p.total_payments < t.transaction_charge THEN 'PARTIALLY PAID'
         ELSE 'PAID'
     END AS payment_status
