@@ -71,28 +71,6 @@ SELECT rental_id, borrower_id, rental_date, remarks
 FROM Rental
 WHERE borrower_id IN ('B0006', 'B0007') OR rental_date > '2026-06-11';
 
-/* VALIDATION 1: Rental date cannot be later than item start date */
-
-SELECT r.rental_id, 
-       r.rental_date,
-       ri.rental_item_id, 
-       ri.start_date
-FROM Rental r
-INNER JOIN RentalItem ri
-    ON r.rental_id = ri.rental_id
-WHERE r.rental_date > ri.start_date; */
-
-/* VALIDATION 2: Payment date cannot precede rental date */
-
-SELECT p.payment_id, 
-       p.payment_date,
-       r.rental_id, 
-       r.rental_date
-FROM Payment p
-INNER JOIN Rental r
-    ON p.rental_id = r.rental_id
-WHERE p.payment_date < r.rental_date; 
-
 /*Overlap & Touching Endpoints Test*/
 /*Overlapping*/ 
 SELECT * FROM rental_overlap; 
@@ -130,3 +108,28 @@ DELETE FROM Rental WHERE rental_id IN ('I900003', 'I900001');
 /*Clean test data 1 and 3 */
 DELETE FROM RentalItem WHERE rental_item_id IN ('RT9003', 'RT9001');
 DELETE FROM Rental WHERE rental_id IN ('I900003', 'I900001');
+
+/*BUSINESS RULES*/
+/* VALIDATION 1: Rental date cannot be later than item start date */
+
+SELECT r.rental_id, 
+       r.rental_date,
+       ri.rental_item_id, 
+       ri.start_date
+FROM Rental r
+INNER JOIN RentalItem ri
+    ON r.rental_id = ri.rental_id
+WHERE r.rental_date > ri.start_date; */
+
+/* VALIDATION 2: Payment date cannot precede rental date */
+
+SELECT p.payment_id, 
+       p.payment_date,
+       r.rental_id, 
+       r.rental_date
+FROM Payment p
+INNER JOIN Rental r
+    ON p.rental_id = r.rental_id
+WHERE p.payment_date < r.rental_date; 
+
+
